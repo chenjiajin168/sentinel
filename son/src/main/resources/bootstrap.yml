@@ -1,0 +1,50 @@
+server:
+  port: 81
+  tomcat:
+    threads:
+      max: 10   # Tomcat的最大并发值修改为10
+
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: admin
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 300000
+      filter:
+        stat: # 配置 StatFilter ，对应文档 https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE_StatFilter
+          log-slow-sql: true # 开启慢查询记录
+          slow-sql-millis: 2000 # 慢 SQL 的标准，单位：毫秒
+          merge-sql: true # SQL合并配置
+      stat-view-servlet:
+        enabled: false
+        login-username: admin
+        login-password: 123456
+  application:
+    name: son
+  cloud:
+    sentinel:
+      transport:
+        port: 9999  # 跟控制台交流的端口,随意指定一个未使用的端口即可
+        dashboard: localhost:8080  # 指定控制台服务的地址 , Sentinel控制器默认8080端口
+      web-context-unify: false  #默认将调用链路手链,导致链路流控效果无效 如果隐藏上下文资源就无法在sentinel控制台看到业务层的链路资源
+
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启sql日志
+
+feign:
+  sentinel:
+    enabled: true  # 开启feign对Sentinel的支持
+
